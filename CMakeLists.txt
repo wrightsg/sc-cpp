@@ -8,6 +8,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(lib)
 
-add_subdirectory(dse)
-add_subdirectory(hello_world)
-add_subdirectory(turtle)
+add_subdirectory(hackathon)
