@@ -47,3 +47,21 @@ TEST(turtle, pen_down)
 
     user.down(42);
 }
+
+TEST(turtle, get_x)
+{
+    turtle_mock turtle;
+    int x = 0;
+
+    ON_CALL(turtle, pen_up()).WillByDefault(::testing::Invoke([&x]{
+        x++;
+    }));
+    ON_CALL(turtle, get_x()).WillByDefault(::testing::Invoke([&x]{
+        return x;
+    }));
+
+    turtle.pen_up();
+    turtle.pen_up();
+
+    ASSERT_EQ(2, turtle.get_x());
+}
