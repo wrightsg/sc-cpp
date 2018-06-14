@@ -17,6 +17,13 @@ public:
         }
     }
 
+    void down (int times)
+    {
+        for (int n = 0; n < times; n++) {
+            _turtle.pen_down();
+        }
+    }
+
 private:
     turtle_interface& _turtle;
 };
@@ -34,9 +41,9 @@ TEST(turtle, pen_up)
 TEST(turtle, pen_down)
 {
     turtle_mock turtle;
-    EXPECT_CALL(turtle, pen_down()).Times(::testing::AtLeast(1));
+    EXPECT_CALL(turtle, pen_down()).Times(42);
 
     turtle_user user(turtle);
 
-    user.up(1);
+    user.down(42);
 }
