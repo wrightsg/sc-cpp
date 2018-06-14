@@ -3,9 +3,9 @@
 
 #include <map>
 
-#include "resource.h"
+#include "entity_interface.h"
 
-class entity
+class entity : public entity_interface
 {
 public:
     entity ()
@@ -13,7 +13,7 @@ public:
     {
     }
 
-    int get_resource (resource r) const
+    int get_resource (resource r) const override
     {
         return _resources.at(r);
     }
