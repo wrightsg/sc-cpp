@@ -8,11 +8,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(lib)
 
-add_executable(hello_world hello_world.cpp)
-add_executable(test_hello_world test_hello_world.cpp)
-target_link_libraries(test_hello_world gtest_main)
-
-add_test(NAME test_hello_world COMMAND test_hello_world)
-
 add_subdirectory(dse)
+add_subdirectory(hello_world)
 add_subdirectory(turtle)
