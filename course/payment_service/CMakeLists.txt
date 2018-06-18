@@ -1,0 +1,4 @@
+add_executable(test_payment_service test_payment_service.cpp)
+target_link_libraries(test_payment_service gmock gtest_main)
+
+add_test(NAME test_payment_service COMMAND test_payment_service)
