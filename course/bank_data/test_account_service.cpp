@@ -67,3 +67,18 @@ TEST(AccountServiceShould, add_same_number_of_negative_transactions_as_withdrawa
     account_service.withdraw(1337);
     account_service.withdraw(10);
 }
+
+TEST(TransactionShould, be_equal_to_transaction_with_same_date_and_id)
+{
+    ASSERT_TRUE(Transaction("1/1/1970", 10) == Transaction("1/1/1970", 10));
+}
+
+TEST(TransactionShould, not_be_equal_to_transaction_with_different_date)
+{
+    ASSERT_FALSE(Transaction("1/1/1970", 10) == Transaction("1/1/1999", 10));
+}
+
+TEST(TransactionShould, not_be_equal_to_transaction_with_different_id)
+{
+    ASSERT_FALSE(Transaction("1/1/1970", 10) == Transaction("1/1/1970", 100));
+}
