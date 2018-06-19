@@ -26,13 +26,26 @@ TEST(PrintStatementFeature, should_print_deposits_and_withdrawals_to_console_in_
     EXPECT_CALL(console, print(statement.str())).Times(1);
 }
 
-TEST(AccountServiceShould, add_same_number_of_positive_transaction_as_deposits_to_transaction_repository)
+TEST(AccountServiceShould, add_same_number_of_positive_transactions_as_deposits_to_transaction_repository)
 {
     TransactionRepositoryMock transaction_repository;
+    EXPECT_CALL(transaction_repository, add_transaction(42)).Times(1);
+    EXPECT_CALL(transaction_repository, add_transaction(1000)).Times(1);
 
     AccountService account_service(transaction_repository);
 
     account_service.deposit(42);
+    account_service.deposit(1000);
+}
 
-    EXPECT_CALL(transaction_repository, add_transaction(42)).Times(1);
+TEST(AccountServiceShould, add_same_number_of_negative_transactions_as_withdrawals_to_transaction_repository)
+{
+    TransactionRepositoryMock transaction_repository;
+    EXPECT_CALL(transaction_repository, add_transaction(-1337)).Times(1);
+    EXPECT_CALL(transaction_repository, add_transaction(-10)).Times(1);
+
+    AccountService account_service(transaction_repository);
+
+    account_service.withdraw(1337);
+    account_service.withdraw(10);
 }
