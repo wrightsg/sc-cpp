@@ -1,0 +1,2 @@
+add_executable(test_account_service test_account_service.cpp)
+target_link_libraries(test_account_service gmock gtest_main)
