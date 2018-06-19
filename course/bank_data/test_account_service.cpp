@@ -28,44 +28,39 @@ TEST(PrintStatementFeature, should_print_deposits_and_withdrawals_to_console_in_
     EXPECT_CALL(console, print(statement.str())).Times(1);
 }
 
-TEST(AccountServiceShould, add_same_number_of_positive_transactions_as_deposits_to_transaction_repository)
+class AccountServiceShould : public ::testing::Test
 {
-    TransactionRepositoryMock transaction_repository;
+public:
+    AccountServiceShould ()
+        : transaction_repository()
+        , date_provider()
+        , account_service(transaction_repository, date_provider)
     {
-        ::testing::InSequence sequence;
-        EXPECT_CALL(transaction_repository, add_transaction(Transaction("10/04/2014", 42)));
-        EXPECT_CALL(transaction_repository, add_transaction(Transaction("02/04/2014", 1000)));
     }
 
+protected:
+    TransactionRepositoryMock transaction_repository;
     DateProviderMock date_provider;
-    EXPECT_CALL(date_provider, get_date())
-            .Times(2)
-            .WillOnce(::testing::Return("10/04/2014"))
-            .WillOnce(::testing::Return("02/04/2014"));
-    AccountService account_service(transaction_repository, date_provider);
+    AccountService account_service;
 
-    account_service.deposit(42);
-    account_service.deposit(1000);
+    static const std::string DATE;
+    static constexpr int AMOUNT = 42;
+};
+
+const std::string AccountServiceShould::DATE = "10/04/2014";
+
+TEST_F(AccountServiceShould, add_a_transaction_with_a_positive_amount_when_depositing)
+{
+    EXPECT_CALL(transaction_repository, add_transaction(Transaction(DATE, AMOUNT)));
+    EXPECT_CALL(date_provider, get_date()).Times(1).WillOnce(::testing::Return(DATE));
+    account_service.deposit(AMOUNT);
 }
 
-TEST(AccountServiceShould, add_same_number_of_negative_transactions_as_withdrawals_to_transaction_repository)
+TEST_F(AccountServiceShould, add_a_transaction_with_negative_amount_when_withdrawing)
 {
-    TransactionRepositoryMock transaction_repository;
-    {
-        ::testing::InSequence sequence;
-        EXPECT_CALL(transaction_repository, add_transaction(Transaction("10/04/2014", -1337))).Times(1);
-        EXPECT_CALL(transaction_repository, add_transaction(Transaction("02/04/2014", -10))).Times(1);
-    }
-
-    DateProviderMock date_provider;
-    EXPECT_CALL(date_provider, get_date())
-            .Times(2)
-            .WillOnce(::testing::Return("10/04/2014"))
-            .WillOnce(::testing::Return("02/04/2014"));
-    AccountService account_service(transaction_repository, date_provider);
-
-    account_service.withdraw(1337);
-    account_service.withdraw(10);
+    EXPECT_CALL(transaction_repository, add_transaction(Transaction(DATE, -AMOUNT)));
+    EXPECT_CALL(date_provider, get_date()).Times(1).WillOnce(::testing::Return(DATE));
+    account_service.withdraw(AMOUNT);
 }
 
 TEST(TransactionShould, be_equal_to_transaction_with_same_date_and_id)
