@@ -2,12 +2,14 @@
 
 #include "account_service.h"
 #include "console_mock.h"
+#include "date_provider_mock.h"
 #include "transaction_repository_mock.h"
 
 TEST(PrintStatementFeature, should_print_deposits_and_withdrawals_to_console_in_reverse_order)
 {
     TransactionRepositoryMock transaction_repository;
-    AccountService account_service(transaction_repository);
+    DateProviderMock date_provider;
+    AccountService account_service(transaction_repository, date_provider);
 
     account_service.deposit(1000);
     account_service.withdraw(100);
@@ -29,10 +31,18 @@ TEST(PrintStatementFeature, should_print_deposits_and_withdrawals_to_console_in_
 TEST(AccountServiceShould, add_same_number_of_positive_transactions_as_deposits_to_transaction_repository)
 {
     TransactionRepositoryMock transaction_repository;
-    EXPECT_CALL(transaction_repository, add_transaction(42)).Times(1);
-    EXPECT_CALL(transaction_repository, add_transaction(1000)).Times(1);
+    {
+        ::testing::InSequence sequence;
+        EXPECT_CALL(transaction_repository, add_transaction(Transaction("10/04/2014", 42)));
+        EXPECT_CALL(transaction_repository, add_transaction(Transaction("02/04/2014", 1000)));
+    }
 
-    AccountService account_service(transaction_repository);
+    DateProviderMock date_provider;
+    EXPECT_CALL(date_provider, get_date())
+            .Times(2)
+            .WillOnce(::testing::Return("10/04/2014"))
+            .WillOnce(::testing::Return("02/04/2014"));
+    AccountService account_service(transaction_repository, date_provider);
 
     account_service.deposit(42);
     account_service.deposit(1000);
@@ -41,10 +51,18 @@ TEST(AccountServiceShould, add_same_number_of_positive_transactions_as_deposits_
 TEST(AccountServiceShould, add_same_number_of_negative_transactions_as_withdrawals_to_transaction_repository)
 {
     TransactionRepositoryMock transaction_repository;
-    EXPECT_CALL(transaction_repository, add_transaction(-1337)).Times(1);
-    EXPECT_CALL(transaction_repository, add_transaction(-10)).Times(1);
+    {
+        ::testing::InSequence sequence;
+        EXPECT_CALL(transaction_repository, add_transaction(Transaction("10/04/2014", -1337))).Times(1);
+        EXPECT_CALL(transaction_repository, add_transaction(Transaction("02/04/2014", -10))).Times(1);
+    }
 
-    AccountService account_service(transaction_repository);
+    DateProviderMock date_provider;
+    EXPECT_CALL(date_provider, get_date())
+            .Times(2)
+            .WillOnce(::testing::Return("10/04/2014"))
+            .WillOnce(::testing::Return("02/04/2014"));
+    AccountService account_service(transaction_repository, date_provider);
 
     account_service.withdraw(1337);
     account_service.withdraw(10);

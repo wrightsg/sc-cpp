@@ -8,7 +8,7 @@
 class TransactionRepositoryMock : public TransactionRepository
 {
 public:
-    MOCK_METHOD1(add_transaction, void(int));
+    MOCK_METHOD1(add_transaction, void(const Transaction&));
 };
 
 #endif //SC_CPP_TRANSACTION_REPOSITORY_MOCK_H
